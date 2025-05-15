@@ -5,6 +5,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
+
+const allowedOrigins = ['https://snap-news-admin-panel-1234.onrender.com'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 const path = require('path');
 
 const adminRoutes = require('./routes/admin');
