@@ -22,7 +22,13 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .catch(err => console.error("❌ MongoDB error:", err));
 
 // Middleware
-app.use(cors());
+const allowedOrigins = ['https://snap-news-admin-panel-1234.onrender.com'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 
