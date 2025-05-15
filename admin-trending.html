@@ -42,9 +42,12 @@
 
     // Load trending videos
     async function loadTrending() {
-      const res = await fetch(`${API}/trending`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const res = await fetch(`${API_BASE}/admin/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+});
+
       const data = await res.json();
       list.innerHTML = "";
 
