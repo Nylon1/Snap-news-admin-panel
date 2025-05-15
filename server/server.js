@@ -13,43 +13,49 @@ const { authenticateAdmin } = require('./middleware/auth');
 
 const app = express();
 
-// ✅ Allow only your admin panel to access the API
+// ✅ CORS config
 const allowedOrigins = ['https://snap-news-admin-panel-1234.onrender.com'];
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ✅ Serve static files (if needed)
+// ✅ Handle preflight OPTIONS requests
+app.options('*', cors());
+
+// ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ MongoDB connection
+// ✅ Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch(err => console.error("❌ MongoDB error:", err));
 
-// ✅ Middleware
+// ✅ Body parser & session middleware
 app.use(express.json());
-app.use(session({ 
-  secret: process.env.SESSION_SECRET, 
-  resave: false, 
-  saveUninitialized: false 
-}));
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 
 // ✅ Public login route
 app.post('/admin/login', require('./controllers/adminController').login);
 
-// ✅ Protected admin routes
+// ✅ Protected routes
 app.use('/admin', authenticateAdmin, adminRoutes);
-
-// ✅ Optional public routes
 app.use('/public', publicRoutes);
 
-// ✅ Root test route
+// ✅ Root endpoint
 app.get('/', (req, res) => {
   res.send('✅ Snap News API is running.');
 });
 
+// ✅ Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
