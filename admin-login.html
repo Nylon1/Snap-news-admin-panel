@@ -38,11 +38,11 @@ const API_BASE = 'https://snapnews-api.onrender.com';
       const password = document.getElementById('password').value;
 
       try {
-        const res = await fetch('http://localhost:3000/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
+        const res = await fetch(`${API_BASE}/admin/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+});
 
         const data = await res.json();
         console.log("Login response:", res.status, data);
