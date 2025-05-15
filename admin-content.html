@@ -58,22 +58,20 @@
     }
 
     async function approve(id) {
-      await fetch(`http://localhost:3000/admin/content/${id}/approve`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchPendingContent();
-    }
+     const res = await fetch(`${API_BASE}/admin/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+});
+
 
     async function reject(id) {
-      await fetch(`http://localhost:3000/admin/content/${id}/reject`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchPendingContent();
-    }
+  const res = await fetch(`${API_BASE}/admin/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+});
 
-    fetchPendingContent();
   </script>
 </body>
 </html>
