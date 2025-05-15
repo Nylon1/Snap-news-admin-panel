@@ -15,51 +15,61 @@
     </form>
     <p id="message" class="text-center text-sm text-red-500 mt-4"></p>
   </div>
-<nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
-  <div class="font-bold text-lg">Snap News Admin</div>
-  <div class="space-x-4 text-sm">
-    <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
-    <a href="admin-content.html" class="hover:underline">Content</a>
-    <a href="admin-users.html" class="hover:underline">Users</a>
-    <a href="admin-trending.html" class="hover:underline">Trending</a>
-    <button onclick="logout()" class="bg-red-600 px-2 py-1 rounded hover:bg-red-700">Logout</button>
-  </div>
-</nav>
+
+  <nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow mt-4 w-full">
+    <div class="font-bold text-lg">Snap News Admin</div>
+    <div class="space-x-4 text-sm">
+      <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
+      <a href="admin-content.html" class="hover:underline">Content</a>
+      <a href="admin-users.html" class="hover:underline">Users</a>
+      <a href="admin-trending.html" class="hover:underline">Trending</a>
+      <button onclick="logout()" class="bg-red-600 px-2 py-1 rounded hover:bg-red-700">Logout</button>
+    </div>
+  </nav>
 
   <script>
-    const form = document.getElementById('loginForm');
-    const msg = document.getElementById('message');
+    const API_BASE = 'https://snapnews-api.onrender.com';
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'admin-login.html';
+    }
 
-      try {
-        const res = await fetch('http://localhost:3000/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('loginForm');
+      const msg = document.getElementById('message');
 
-        const data = await res.json();
-        console.log("Login response:", res.status, data);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
-        if (res.ok) {
-          localStorage.setItem('token', data.token);
-          msg.textContent = 'Login successful!';
-          msg.classList.remove('text-red-500');
-          msg.classList.add('text-green-600');
-          setTimeout(() => {
-            window.location.href = 'admin-dashboard.html';
-          }, 1000);
-        } else {
-          msg.textContent = data.message || 'Login failed.';
+        try {
+          const res = await fetch(`${API_BASE}/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+
+          const data = await res.json();
+          console.log("Login response:", res.status, data);
+
+          if (res.ok) {
+            localStorage.setItem('token', data.token);
+            msg.textContent = 'Login successful!';
+            msg.classList.remove('text-red-500');
+            msg.classList.add('text-green-600');
+            setTimeout(() => {
+              window.location.href = 'admin-dashboard.html';
+            }, 1000);
+          } else {
+            msg.textContent = data.message || 'Login failed.';
+          }
+        } catch (err) {
+          console.error("Fetch error:", err);
+          msg.textContent = 'Error connecting to server.';
         }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        msg.textContent = 'Error connecting to server.';
-      }
+      });
     });
   </script>
 </body>
