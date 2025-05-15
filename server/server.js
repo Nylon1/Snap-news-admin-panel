@@ -31,3 +31,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 const publicRoutes = require('./routes/public');
 app.use('/public', publicRoutes);
+app.get('/', (req, res) => {
+  res.send('✅ Snap News API is running.');
+});
