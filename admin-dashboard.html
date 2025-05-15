@@ -37,13 +37,12 @@ const API_BASE = 'https://snapnews-api.onrender.com';
     if (!token) {
       window.location.href = 'admin-login.html';
     }
+const res = await fetch(`${API_BASE}/admin/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username, password })
+});
 
-    // Fetch dashboard metrics
-    fetch('http://localhost:3000/admin/dashboard', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
     .then(res => {
       if (!res.ok) throw new Error('Unauthorized');
       return res.json();
