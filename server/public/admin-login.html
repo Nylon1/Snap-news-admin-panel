@@ -41,7 +41,8 @@
       const form = document.getElementById('loginForm');
       const msg = document.getElementById('message');
 
-      form.addEventListener('submit', async (e) => {
+      document.getElementById('submitBtn').addEventListener('click', async (e) => {
+
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
