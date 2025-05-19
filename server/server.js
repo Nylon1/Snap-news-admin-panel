@@ -19,6 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ CORS config (cleaned)
 const allowedOrigins = [
   'https://snap-news-admin-panel-1234.onrender.com',
   'https://snapnews-api.onrender.com',
@@ -38,26 +39,21 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
+// ✅ Apply CORS globally
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Preflight support
 
+// ✅ Preflight request handler
+app.options('*', cors(corsOptions));
 
-// ✅ Preflight OPTIONS requests (important!)
-app.options('*', cors());
-
-
-// ✅ Handle preflight OPTIONS requests
-app.options('*', cors());
-
-// ✅ Serve static frontend files
+// ✅ Static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Connect to MongoDB
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch(err => console.error("❌ MongoDB error:", err));
 
-// ✅ Body parser & session middleware
+// ✅ Middleware
 app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -65,9 +61,8 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// ✅ Public login route with explicit CORS fix
+// ✅ Public login route with explicit CORS
 app.post('/admin/login', cors(corsOptions), require('./controllers/adminController').login);
-
 
 // ✅ Protected routes
 app.use('/admin', authenticateAdmin, adminRoutes);
