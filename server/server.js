@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ CORS config (cleaned)
+// ✅ CORS config
 const allowedOrigins = [
   'https://snap-news-admin-panel-1234.onrender.com',
   'https://snapnews-api.onrender.com',
@@ -41,11 +41,9 @@ const corsOptions = {
 
 // ✅ Apply CORS globally
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Preflight
 
-// ✅ Preflight request handler
-app.options('*', cors(corsOptions));
-
-// ✅ Static frontend files
+// ✅ Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ MongoDB connection
@@ -91,6 +89,11 @@ app.get('/create', (req, res) => {
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin-login.html'));
+});
+
+// ✅ CORS test route
+app.get('/cors-check', cors(corsOptions), (req, res) => {
+  res.json({ message: 'CORS is working ✅' });
 });
 
 // ✅ Start server
