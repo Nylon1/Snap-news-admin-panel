@@ -19,15 +19,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ CORS config with updated allowed origins
 const allowedOrigins = [
-  'https://snap-news-admin-panel-1234.onrender.com',  // Admin panel (Render frontend)
-  'https://snapnews-api.onrender.com',                // Optional: your backend’s own origin
-  'https://snap-news-admin.vercel.app',               // Optional: if deployed on Vercel
-  'http://localhost:5173'                             // Local dev
+  'https://snap-news-admin-panel-1234.onrender.com',
+  'https://snapnews-api.onrender.com',
+  'http://localhost:5173'
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -38,7 +36,11 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Preflight support
+
 
 // ✅ Preflight OPTIONS requests (important!)
 app.options('*', cors());
@@ -63,8 +65,9 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// ✅ Public login route
-app.post('/admin/login', require('./controllers/adminController').login);
+// ✅ Public login route with explicit CORS fix
+app.post('/admin/login', cors(corsOptions), require('./controllers/adminController').login);
+
 
 // ✅ Protected routes
 app.use('/admin', authenticateAdmin, adminRoutes);
