@@ -13,8 +13,19 @@ const { authenticateAdmin } = require('./middleware/auth');
 
 const app = express();
 
-// ✅ CORS config
-const allowedOrigins = ['https://snap-news-admin-panel-1234.onrender.com'];
+// 🔍 Debug origin logging
+app.use((req, res, next) => {
+  console.log('🔍 Request Origin:', req.headers.origin);
+  next();
+});
+
+// ✅ CORS config with updated allowed origins
+const allowedOrigins = [
+  'https://snap-news-admin-panel-1234.onrender.com',  // Backend Render
+  'https://snap-news-admin.vercel.app',               // Frontend Vercel (adjust if needed)
+  'http://localhost:5173'                             // Local Dev
+];
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -82,4 +93,3 @@ app.get('/login', (req, res) => {
 // ✅ Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
