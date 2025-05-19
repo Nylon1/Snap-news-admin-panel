@@ -21,9 +21,10 @@ app.use((req, res, next) => {
 
 // ✅ CORS config with updated allowed origins
 const allowedOrigins = [
-  'https://snap-news-admin-panel-1234.onrender.com',  // Backend Render
-  'https://snap-news-admin.vercel.app',               // Frontend Vercel (adjust if needed)
-  'http://localhost:5173'                             // Local Dev
+  'https://snap-news-admin-panel-1234.onrender.com',  // Admin panel (Render frontend)
+  'https://snapnews-api.onrender.com',                // Optional: your backend’s own origin
+  'https://snap-news-admin.vercel.app',               // Optional: if deployed on Vercel
+  'http://localhost:5173'                             // Local dev
 ];
 
 app.use(cors({
@@ -38,6 +39,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// ✅ Preflight OPTIONS requests (important!)
+app.options('*', cors());
+
 
 // ✅ Handle preflight OPTIONS requests
 app.options('*', cors());
