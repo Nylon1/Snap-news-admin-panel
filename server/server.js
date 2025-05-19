@@ -41,7 +41,11 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 // ✅ Body parser & session middleware
 app.use(express.json());
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
 
 // ✅ Public login route
 app.post('/admin/login', require('./controllers/adminController').login);
@@ -50,9 +54,29 @@ app.post('/admin/login', require('./controllers/adminController').login);
 app.use('/admin', authenticateAdmin, adminRoutes);
 app.use('/public', publicRoutes);
 
-// ✅ Root endpoint
+// ✅ Admin UI Routes
 app.get('/', (req, res) => {
-  res.send('✅ Snap News API is running.');
+  res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+});
+
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+});
+
+app.get('/content', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-content.html'));
+});
+
+app.get('/analytics', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-analytics.html'));
+});
+
+app.get('/create', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-create.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin-login.html'));
 });
 
 // ✅ Start server
