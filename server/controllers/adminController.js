@@ -153,3 +153,13 @@ exports.getAnalytics = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch analytics." });
   }
 };
+// ==================== Public Access (Frontend) ====================
+exports.getApprovedContent = async (req, res) => {
+  try {
+    const items = await Content.find({ status: 'approved' }).sort({ createdAt: -1 });
+    res.json(items);
+  } catch (err) {
+    console.error('Error fetching approved content:', err);
+    res.status(500).json({ message: 'Failed to fetch approved content.' });
+  }
+};

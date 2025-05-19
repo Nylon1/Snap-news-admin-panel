@@ -19,4 +19,7 @@ router.delete('/trending/:id', adminController.deleteTrending);
 router.post('/content', adminController.createContent);
 router.get('/analytics', adminController.getAnalytics);
 
+// Public route for frontend to fetch approved content
+router.get('/public/approved', adminController.getApprovedContent);
+
 module.exports = router;
