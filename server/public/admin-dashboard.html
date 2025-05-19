@@ -11,61 +11,67 @@
       <h1 class="text-2xl font-bold">Admin Dashboard</h1>
       <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
     </div>
-<nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
-  <div class="font-bold text-lg">Snap News Admin</div>
-  <div class="space-x-4 text-sm">
-    <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
-    <a href="admin-content.html" class="hover:underline">Content</a>
-    <a href="admin-users.html" class="hover:underline">Users</a>
-    <a href="admin-trending.html" class="hover:underline">Trending</a>
-    <button onclick="logout()" class="bg-red-600 px-2 py-1 rounded hover:bg-red-700">Logout</button>
-  </div>
-</nav>
 
-    <h2 class="text-lg font-semibold mb-2">Site Metrics</h2>
+    <nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
+      <div class="font-bold text-lg">Snap News Admin</div>
+      <div class="space-x-4 text-sm">
+        <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
+        <a href="admin-content.html" class="hover:underline">Content</a>
+        <a href="admin-users.html" class="hover:underline">Users</a>
+        <a href="admin-trending.html" class="hover:underline">Trending</a>
+        <button onclick="logout()" class="bg-red-600 px-2 py-1 rounded hover:bg-red-700">Logout</button>
+      </div>
+    </nav>
+
+    <h2 class="text-lg font-semibold mb-2 mt-4">Site Metrics</h2>
     <pre id="output" class="bg-gray-100 text-sm text-gray-700 p-4 rounded overflow-x-auto">Loading...</pre>
   </div>
 
-  <script>
-const API_BASE = 'https://snapnews-api.onrender.com';
+  <a href="admin-content.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
+    Manage Pending Content
+  </a>
 
+  <script>
+    const API_BASE = 'https://snap-news-backend.onrender.com';
     const token = localStorage.getItem('token');
     const output = document.getElementById('output');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    // Redirect to login if token missing
     if (!token) {
       window.location.href = 'admin-login.html';
     }
-const res = await fetch(`${API_BASE}/admin/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, password })
-});
 
-    .then(res => {
-      if (!res.ok) throw new Error('Unauthorized');
-      return res.json();
-    })
-    .then(data => {
-      output.textContent = JSON.stringify(data, null, 2);
-    })
-    .catch(err => {
-      output.textContent = '❌ Session expired or invalid. Redirecting to login...';
-      setTimeout(() => {
-        localStorage.removeItem('token');
-        window.location.href = 'admin-login.html';
-      }, 2000);
-    });
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/dashboard`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-    logoutBtn.addEventListener('click', () => {
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || 'Unauthorized');
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        console.error('❌ Dashboard fetch failed:', err);
+        output.textContent = '❌ Session expired or invalid. Redirecting to login...';
+        setTimeout(() => {
+          localStorage.removeItem('token');
+          window.location.href = 'admin-login.html';
+        }, 2000);
+      }
+    }
+
+    function logout() {
       localStorage.removeItem('token');
       window.location.href = 'admin-login.html';
-    });
+    }
+
+    logoutBtn.addEventListener('click', logout);
+    document.addEventListener('DOMContentLoaded', loadDashboard);
   </script>
-  <a href="admin-content.html" class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4">
-  Manage Pending Content
-</a>
 </body>
 </html>
+
 
