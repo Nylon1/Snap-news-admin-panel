@@ -69,6 +69,14 @@ exports.rejectContent = async (req, res) => {
     res.status(500).json({ error: 'Failed to reject content.' });
   }
 };
+exports.listPendingContent = async (req, res) => {
+  try {
+    const items = await Content.find({ status: 'pending' }).sort({ createdAt: -1 });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to load content' });
+  }
+};
 
 // ==================== Users ====================
 exports.listUsers = (req, res) => {
