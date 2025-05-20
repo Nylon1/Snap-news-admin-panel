@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 router.post('/login', adminController.login);
+router.get('/pending-content', adminController.listPendingContent);
 
 router.get('/dashboard', adminController.getDashboardMetrics);
 router.get('/content', adminController.listContent);
