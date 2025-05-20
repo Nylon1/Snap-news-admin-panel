@@ -1,77 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Content Moderation – Snap News</title>
+  <meta charset="UTF-8" />
+  <title>Moderate Content – Snap News</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <h1 class="text-2xl font-bold mb-4">Pending Content</h1>
-  <div id="contentList" class="space-y-4"></div>
-<nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
-  <div class="font-bold text-lg">Snap News Admin</div>
-  <div class="space-x-4 text-sm">
-    <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
-    <a href="admin-content.html" class="hover:underline">Content</a>
-    <a href="admin-users.html" class="hover:underline">Users</a>
-    <a href="admin-trending.html" class="hover:underline">Trending</a>
-    <button onclick="logout()" class="bg-red-600 px-2 py-1 rounded hover:bg-red-700">Logout</button>
+<body class="bg-gray-100 min-h-screen px-6 py-10">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">Pending Snaps</h1>
+      <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+    </div>
+
+    <div id="contentList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <!-- Cards injected here -->
+    </div>
   </div>
-</nav>
 
   <script>
-    const API_BASE = 'https://snapnews-api.onrender.com';
+    const API_BASE = 'https://snap-news-backend.onrender.com';
+    const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem("token");
+    async function loadPendingContent() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/pending-content`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-    if (!token) {
-      alert("Not logged in");
-      window.location.href = "admin-login.html";
+        const data = await res.json();
+        const container = document.getElementById('contentList');
+        container.innerHTML = '';
+
+        data.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded shadow p-4 flex flex-col items-center';
+          card.innerHTML = `
+            <video src="${item.videoUrl}" controls class="w-full rounded mb-4"></video>
+            <p class="text-sm text-gray-700 mb-2">${item.caption || 'No caption'}</p>
+            <div class="flex gap-2">
+              <button onclick="moderate('${item._id}', 'approve')" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Approve</button>
+              <button onclick="moderate('${item._id}', 'reject')" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Reject</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        alert('Failed to load content.');
+        console.error(err);
+      }
     }
 
-    async function fetchPendingContent() {
-      const res = await fetch(`${API_BASE}/admin/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, password })
-});
+    async function moderate(id, action) {
+      try {
+        const res = await fetch(`${API_BASE}/admin/moderate/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ action })
+        });
 
-      const items = await res.json();
-
-      const container = document.getElementById("contentList");
-      container.innerHTML = "";
-
-      items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "bg-white p-4 rounded shadow";
-
-        div.innerHTML = `
-          <h2 class="text-lg font-semibold">${item.title}</h2>
-          <p class="text-sm text-gray-600">ID: ${item._id}</p>
-          <div class="mt-2 space-x-2">
-            <button onclick="approve('${item._id}')" class="bg-green-600 text-white px-3 py-1 rounded">Approve</button>
-            <button onclick="reject('${item._id}')" class="bg-red-600 text-white px-3 py-1 rounded">Reject</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
+        if (res.ok) {
+          loadPendingContent();
+        } else {
+          alert('Action failed.');
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    async function approve(id) {
-     const res = await fetch(`${API_BASE}/admin/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, password })
-});
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'admin-login.html';
+    }
 
-
-    async function reject(id) {
-  const res = await fetch(`${API_BASE}/admin/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, password })
-});
-
+    document.addEventListener('DOMContentLoaded', loadPendingContent);
   </script>
 </body>
 </html>
