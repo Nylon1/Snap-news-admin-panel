@@ -68,7 +68,6 @@ app.post('/admin/login', cors(corsOptions), require('./controllers/adminControll
 app.use('/admin', authenticateAdmin, adminRoutes);
 app.use('/public', publicRoutes);
 
-const path = require('path');
 
 // ✅ Admin UI Routes
 app.get('/', (req, res) => {
