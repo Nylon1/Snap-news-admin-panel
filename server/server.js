@@ -68,29 +68,31 @@ app.post('/admin/login', cors(corsOptions), require('./controllers/adminControll
 app.use('/admin', authenticateAdmin, adminRoutes);
 app.use('/public', publicRoutes);
 
+const path = require('path');
+
 // ✅ Admin UI Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 });
 
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 });
 
 app.get('/content', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-content.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-content.html'));
 });
 
 app.get('/analytics', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-analytics.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-analytics.html'));
 });
 
 app.get('/create', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-create.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-create.html'));
 });
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-login.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
 });
 
 // ✅ CORS test route
