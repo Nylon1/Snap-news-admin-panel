@@ -1,4 +1,5 @@
-const Content = require('../models/Content');
+const Content = require('../../models/Content'); // ✅ correct
+
 const { signToken } = require('../utils/jwt');
 
 // ==================== Login ====================
