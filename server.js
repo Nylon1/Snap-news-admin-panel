@@ -7,9 +7,9 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 
-const adminRoutes = require('./routes/admin');
-const publicRoutes = require('./routes/public');
-const { authenticateAdmin } = require('./middleware/auth');
+const adminRoutes = require('./server/routes/admin');
+const publicRoutes = require('./server/routes/public');
+const { authenticateAdmin } = require('./server/middleware/auth');
 
 const app = express();
 
@@ -62,7 +62,7 @@ app.use(session({
 }));
 
 // ✅ Public login route with explicit CORS
-app.post('/admin/login', cors(corsOptions), require('./controllers/adminController').login);
+app.post('/admin/login', cors(corsOptions), require('./server/controllers/adminController').login);
 
 // ✅ Protected routes
 app.use('/admin', authenticateAdmin, adminRoutes);
