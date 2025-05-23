@@ -22,7 +22,6 @@ app.use((req, res, next) => {
 });
 
 // CORS configuration
-the allowedOrigins array defines which front-end domains can call this API
 const allowedOrigins = [
   'https://snap-news-admin-panel-1234.onrender.com',
   'https://snap-news-backend.onrender.com',
@@ -44,11 +43,12 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
-// Apply CORS globally (handles preflight and actual requests)
+
+// Apply CORS globally
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-// Serve static frontend files for admin UI (move public into server/public folder)
+// Serve static frontend files for admin UI
 app.use(express.static(path.join(__dirname, 'server', 'public')));
 
 // MongoDB connection
@@ -65,7 +65,7 @@ app.use(session({
 }));
 
 // Public login route
-app.post('/admin/login', adminController.login);
+app.post('/admin/login', cors(corsOptions), adminController.login);
 
 // Protected admin API routes
 app.use('/admin', authenticateAdmin, adminRoutes);
@@ -73,7 +73,7 @@ app.use('/admin', authenticateAdmin, adminRoutes);
 // Public content API routes
 app.use('/public', publicRoutes);
 
-// Admin UI pages (point to server/public folder)
+// Admin UI pages
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'server', 'public', 'admin-dashboard.html'));
 });
@@ -94,10 +94,11 @@ app.get('/login', (req, res) => {
 });
 
 // CORS test endpoint
-app.get('/cors-check', (req, res) => {
+app.get('/cors-check', cors(corsOptions), (req, res) => {
   res.json({ message: 'CORS is working ✅' });
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
