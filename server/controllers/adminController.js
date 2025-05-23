@@ -100,7 +100,7 @@ exports.getSettings = (req, res) => {
 exports.updateSettings = (req, res) => {
   res.json({ message: 'Settings updated' });
 };
-const Trending = require('../models/Trending');
+const Trending = require('../../models/Trending');
 
 // List all trending videos
 exports.getTrending = async (req, res) => {
@@ -136,7 +136,7 @@ exports.deleteTrending = async (req, res) => {
 exports.createContent = async (req, res) => {
   try {
     const { title, videoUrl, type, description, status } = req.body;
-    const Content = require('../models/Content');
+    const Content = require('../../models/Trending') ;
     const content = new Content({ title, videoUrl, type, description, status });
     await content.save();
     res.json({ message: 'Content created successfully' });
@@ -145,7 +145,7 @@ exports.createContent = async (req, res) => {
   }
 };
 exports.getAnalytics = async (req, res) => {
-  const Content = require('../models/Content');
+  const Content = require('../../models/Trending');
   try {
     const approved = await Content.countDocuments({ status: 'approved' });
     const pending = await Content.countDocuments({ status: 'pending' });
