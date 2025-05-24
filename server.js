@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 // CORS configuration
 const allowedOrigins = [
   'https://snap-news-admin-panel-1234.onrender.com',
-  'https://snap-news-backend.onrender.com',
+
   'http://localhost:5173',
   'https://snap-news.onrender.com',
   'https://snapbackend-new.onrender.com'
