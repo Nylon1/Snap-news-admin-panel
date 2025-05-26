@@ -11,13 +11,11 @@
     <form id="loginForm" class="space-y-4">
       <input type="text" id="username" placeholder="Username" required class="w-full border px-3 py-2 rounded" />
       <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
-    <button type="button" id="submitBtn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
     </form>
     <p id="message" class="text-center text-sm text-red-500 mt-4"></p>
   </div>
-
-  <nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow mt-4 w-full">
+  <nav class="bg-gray-800 text-white px-4 py-3 flex justify-between items-center shadow">
     <div class="font-bold text-lg">Snap News Admin</div>
     <div class="space-x-4 text-sm">
       <a href="admin-dashboard.html" class="hover:underline">Dashboard</a>
@@ -29,52 +27,46 @@
   </nav>
 
   <script>
-   const API_BASE = 'https://snapbackend-new.onrender.com';
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('message');
 
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('https://snapbackend-new.onrender.com/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // This is the important line!
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+        console.log("Login response:", res.status, data);
+
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          msg.textContent = 'Login successful!';
+          msg.classList.remove('text-red-500');
+          msg.classList.add('text-green-600');
+          setTimeout(() => {
+            window.location.href = 'admin-dashboard.html';
+          }, 1000);
+        } else {
+          msg.textContent = data.message || 'Login failed.';
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        msg.textContent = 'Error connecting to server.';
+      }
+    });
 
     function logout() {
       localStorage.removeItem('token');
       window.location.href = 'admin-login.html';
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('loginForm');
-      const msg = document.getElementById('message');
-
-      document.getElementById('submitBtn').addEventListener('click', async (e) => {
-
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-          const res = await fetch(`${
-      credentials: 'include',API_BASE}/admin/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-          });
-
-          const data = await res.json();
-          console.log("Login response:", res.status, data);
-
-          if (res.ok) {
-            localStorage.setItem('token', data.token);
-            msg.textContent = 'Login successful!';
-            msg.classList.remove('text-red-500');
-            msg.classList.add('text-green-600');
-            setTimeout(() => {
-              window.location.href = 'admin-dashboard.html';
-            }, 1000);
-          } else {
-            msg.textContent = data.message || 'Login failed.';
-          }
-        } catch (err) {
-          console.error("Fetch error:", err);
-          msg.textContent = 'Error connecting to server.';
-        }
-      });
-    });
   </script>
 </body>
 </html>
